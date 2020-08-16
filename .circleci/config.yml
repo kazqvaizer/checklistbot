@@ -6,7 +6,7 @@ orbs:
 defaults: &defaults
   resource_class: 'small'
   docker:
-    - image: circleci/python:3.8-buster
+    - image: circleci/python:3.8.5-buster
 
 jobs:
   lint_and_test:
@@ -61,9 +61,22 @@ workflows:
   main:
     jobs:
       - lint_and_test
-      - deploy:
+      - docker/publish:
+          image: kazqvaizer/checklistbot
+          tag: latest,${CIRCLE_SHA1}
+          cache_from: kazqvaizer/checklistbot:latest
+          path: src
+          before_build:
+            - attach_workspace:
+                at: .
           requires:
             - lint_and_test
+          filters:
+            branches:
+              only: master
+      - deploy:
+          requires:
+            - docker/publish
           filters:
             branches:
               only: master
