@@ -7,10 +7,11 @@ cffi==1.14.2
 click==7.1.2
 cryptography==3.0
 decorator==4.4.2
+envparse==0.2.0
 eradicate==1.0
 flake8==3.8.3
+flake8-black==0.2.1
 flake8-bugbear==20.1.4
-flake8-commas==2.0.0
 flake8-eradicate==0.4.0
 flake8-isort==4.0.0
 flake8-print==3.1.4
