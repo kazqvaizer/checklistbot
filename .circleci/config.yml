@@ -5,12 +5,15 @@ orbs:
 
 defaults: &defaults
   resource_class: 'small'
-  docker:
-    - image: circleci/python:3.8.5-buster
 
 jobs:
   lint_and_test:
+
     <<: *defaults
+
+    docker:
+      - image: circleci/python:3.8.5-buster
+
     steps:
 
       - checkout
@@ -50,12 +53,27 @@ jobs:
             - ".circleci"
 
   deploy:
+
     <<: *defaults
 
+    docker:
+      - image: circleci/buildpack-deps:stretch
+
     steps:
+
       - attach_workspace:
           at: .
 
+      - run:
+          name: Prepare ssh
+          command: |
+            mkdir -p ~/.ssh
+            cp .circleci/ssh_config ~/.ssh/config
+            cp .circleci/known_hosts ~/.ssh/
+
+      - run:
+          name: Deploy and wait
+          command: ssh prod "/srv/deploy-and-wait.sh checklistbot"
 
 workflows:
   main:
