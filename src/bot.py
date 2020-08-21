@@ -17,7 +17,7 @@ dispatcher = updater.dispatcher
 
 def start(update, context):
     context.bot.send_message(
-        chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!"
+        chat_id=update.effective_chat.id, text="Here would be some logic soon!"
     )
 
 
