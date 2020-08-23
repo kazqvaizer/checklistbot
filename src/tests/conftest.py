@@ -1,6 +1,6 @@
 import pytest
 
-from ..models import app_models, db
+from ..models import Chat, app_models, db
 
 
 @pytest.fixture(scope="function")
@@ -14,3 +14,12 @@ def use_db():
     yield db
 
     db.close()
+
+
+@pytest.fixture
+def factory():
+    class Factory:
+        def chat(*args, **kwargs):
+            return Chat.create(**kwargs)
+
+    return Factory()
