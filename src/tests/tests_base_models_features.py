@@ -8,7 +8,7 @@ pytestmark = [
 
 @pytest.fixture
 def chat(factory):
-    return factory.chat(chat_id="100500")
+    return factory.chat()
 
 
 def test_created_date(chat):

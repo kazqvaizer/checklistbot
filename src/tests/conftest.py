@@ -1,7 +1,9 @@
 import json
 from os import path
+from random import randint
 
 import pytest
+from telegram.bot import Bot
 from telegram.update import Update
 
 from models import Chat, app_models, db
@@ -29,7 +31,8 @@ def mock_send_message(mocker):
 def factory():
     class Factory:
         def chat(*args, **kwargs):
-            return Chat.create(**kwargs)
+            chat_id = kwargs.pop("chat_id", None) or randint(100000, 200000)
+            return Chat.create(chat_id=chat_id, **kwargs)
 
     return Factory()
 
@@ -48,3 +51,8 @@ def read_fixture():
 @pytest.fixture
 def telegram_update():
     return lambda data: Update.de_json(data, None)
+
+
+@pytest.fixture
+def telegram_bot():
+    return Bot("123:123")
