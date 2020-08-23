@@ -1,7 +1,7 @@
 import pytest
 
 from bot import start
-from models import Chat
+from models import Chat, Message
 
 pytestmark = [
     pytest.mark.usefixtures("use_db"),
@@ -30,8 +30,12 @@ def test_no_chats_by_default():
     assert Chat.select().count() == 0
 
 
+def test_no_messages_by_default():
+    assert Message.select().count() == 0
+
+
 @pytest.mark.parametrize("method", (start,))
-def test_chat_created_after_message(execute, raw_message, method):
+def test_chat_created_after_event(execute, raw_message, method):
     execute(method, raw_message)
 
     chat = Chat.select().first()
@@ -40,6 +44,17 @@ def test_chat_created_after_message(execute, raw_message, method):
     assert chat.first_name == "John"
     assert chat.last_name == "Doe"
     assert chat.chat_type == "private"
+
+
+@pytest.mark.parametrize("method", (start,))
+def test_message_created_after_event(chat, execute, raw_message, method):
+    execute(method, raw_message)
+
+    message = Message.select().first()
+    assert message.message_id == 48
+    assert message.text == "/start"
+    assert message.chat == chat
+    assert message.date == "2017-07-14 02:40:00+00:00"  # fuken sqlite dates
 
 
 def test_existed_chat_updates(chat, execute, raw_message):

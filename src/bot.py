@@ -3,7 +3,8 @@ import logging
 from envparse import env
 from telegram.ext import CommandHandler, Updater
 
-from decorators import create_or_update_chat
+from decorators import save_chat_and_message
+from models import Chat, Message
 
 logging.basicConfig(
     level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -17,8 +18,8 @@ updater = Updater(token=env("TELEGRAM_BOT_TOKEN"), use_context=True)
 dispatcher = updater.dispatcher
 
 
-@create_or_update_chat
-def start(update, context):
+@save_chat_and_message
+def start(update, context, chat: Chat, message: Message):
     pass
 
 

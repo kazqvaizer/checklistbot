@@ -1,20 +1,20 @@
 from datetime import datetime
 
+import peewee as pw
 from envparse import env
-from peewee import CharField, DateTimeField, IntegerField, Model, SqliteDatabase
 
 env.read_envfile()
 
-db = SqliteDatabase(env("DATABASE_URL"))
+db = pw.SqliteDatabase(env("DATABASE_URL"))
 
 
 def _utcnow():
     return datetime.utcnow()
 
 
-class BaseModel(Model):
-    created = DateTimeField(default=_utcnow)
-    modified = DateTimeField(null=True)
+class BaseModel(pw.Model):
+    created = pw.DateTimeField(default=_utcnow)
+    modified = pw.DateTimeField(null=True)
 
     class Meta:
         database = db
@@ -27,11 +27,18 @@ class BaseModel(Model):
 
 
 class Chat(BaseModel):
-    chat_id = IntegerField(unique=True)
-    chat_type = CharField(null=True)
-    username = CharField(null=True)
-    first_name = CharField(null=True)
-    last_name = CharField(null=True)
+    chat_id = pw.IntegerField(unique=True)
+    chat_type = pw.CharField(null=True)
+    username = pw.CharField(null=True)
+    first_name = pw.CharField(null=True)
+    last_name = pw.CharField(null=True)
+
+
+class Message(BaseModel):
+    message_id = pw.IntegerField()
+    chat = pw.ForeignKeyField(Chat, backref="messages")
+    date = pw.DateTimeField(null=True)
+    text = pw.CharField(null=True)
 
 
 app_models = BaseModel.__subclasses__()
