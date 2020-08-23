@@ -34,6 +34,10 @@ jobs:
             - "venv"
 
       - run:
+          name: Create empty dot env file
+          command: touch src/.env
+
+      - run:
           name: Linter
           command: |
             . venv/bin/activate
@@ -43,7 +47,7 @@ jobs:
           name: Test
           command: |
             . venv/bin/activate
-            cd src && pytest
+            cd src && python -m pytest
 
       - persist_to_workspace:
           root: .
