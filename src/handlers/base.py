@@ -16,6 +16,7 @@ class Reply:
 
 
 class Replier:
+    """Collects all replies."""
 
     _replies: List[Reply]
 
@@ -43,6 +44,8 @@ class Replier:
 
 
 class EventHandler(ABC):
+    """Base event handler."""
+
     def __init__(self, chat: Chat, message: Message, bot: Bot = None):
         self.chat = chat
         self.message = message
@@ -52,3 +55,7 @@ class EventHandler(ABC):
     @abstractmethod
     def work(self):
         """Do some work, add replies to replier..."""
+
+    def reply_to_all(self):
+        """Reply to all generated messages."""
+        self.replier.reply_to_all()

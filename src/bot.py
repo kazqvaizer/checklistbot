@@ -4,6 +4,7 @@ from envparse import env
 from telegram.ext import CommandHandler, Updater
 
 from decorators import save_chat_and_message
+from handlers import StartHandler
 from models import Chat, Message
 
 logging.basicConfig(
@@ -20,7 +21,9 @@ dispatcher = updater.dispatcher
 
 @save_chat_and_message
 def start(update, context, chat: Chat, message: Message):
-    pass
+    handler = StartHandler(chat=chat, message=message, bot=context.bot)
+    handler.work()
+    handler.reply_to_all()
 
 
 def define_routes():

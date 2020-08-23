@@ -6,7 +6,7 @@ import pytest
 from telegram.bot import Bot
 from telegram.update import Update
 
-from models import Chat, app_models, db
+from models import Chat, Message, app_models, db
 
 
 @pytest.fixture(scope="function")
@@ -28,11 +28,20 @@ def mock_send_message(mocker):
 
 
 @pytest.fixture
+def mock_reply_to_all(mocker):
+    return mocker.patch("handlers.base.Replier.reply_to_all")
+
+
+@pytest.fixture
 def factory():
     class Factory:
-        def chat(*args, **kwargs):
+        def chat(self, **kwargs):
             chat_id = kwargs.pop("chat_id", None) or randint(100000, 200000)
             return Chat.create(chat_id=chat_id, **kwargs)
+
+        def message(self, **kwargs):
+            chat = kwargs.pop("chat", None) or self.chat()
+            return Message.create(chat=chat, **kwargs)
 
     return Factory()
 
@@ -56,3 +65,11 @@ def telegram_update():
 @pytest.fixture
 def telegram_bot():
     return Bot("123:123")
+
+
+@pytest.fixture
+def telegram_context(telegram_bot):
+    class Context:
+        bot = telegram_bot
+
+    return Context()

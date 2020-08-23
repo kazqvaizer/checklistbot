@@ -34,11 +34,11 @@ class Chat(BaseModel):
     last_name = pw.CharField(null=True)
 
     def get_name(self):
-        return self.first_name or self.username or ''
+        return self.first_name or self.username or ""
 
 
 class Message(BaseModel):
-    message_id = pw.IntegerField()
+    message_id = pw.IntegerField(null=True)
     chat = pw.ForeignKeyField(Chat, backref="messages")
     date = pw.DateTimeField(null=True)
     text = pw.CharField(null=True)

@@ -14,9 +14,9 @@ def raw_message(read_fixture):
 
 
 @pytest.fixture
-def execute(telegram_update):
+def execute(telegram_update, telegram_context):
     def _execute(method: callable, data: dict):
-        return method(telegram_update(data), {})
+        return method(telegram_update(data), telegram_context)
 
     return _execute
 
@@ -55,6 +55,13 @@ def test_message_created_after_event(chat, execute, raw_message, method):
     assert message.text == "/start"
     assert message.chat == chat
     assert message.date == "2017-07-14 02:40:00+00:00"  # fuken sqlite dates
+
+
+@pytest.mark.parametrize("method", (start,))
+def test_auto_reply(chat, execute, raw_message, method, mock_reply_to_all):
+    execute(method, raw_message)
+
+    assert mock_reply_to_all.call_count == 1
 
 
 def test_existed_chat_updates(chat, execute, raw_message):
