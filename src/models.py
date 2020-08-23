@@ -33,6 +33,9 @@ class Chat(BaseModel):
     first_name = pw.CharField(null=True)
     last_name = pw.CharField(null=True)
 
+    def get_name(self):
+        return self.first_name or self.username or ''
+
 
 class Message(BaseModel):
     message_id = pw.IntegerField()
