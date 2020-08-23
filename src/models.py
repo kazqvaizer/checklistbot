@@ -35,12 +35,3 @@ class Chat(BaseModel):
 
 
 app_models = BaseModel.__subclasses__()
-
-
-def migrate_db():
-    db.connect()
-    db.create_tables(app_models)
-    db.close()
-
-
-migrate_db()
