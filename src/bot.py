@@ -19,24 +19,22 @@ updater = Updater(token=env("TELEGRAM_BOT_TOKEN"), use_context=True)
 dispatcher = updater.dispatcher
 
 
-@save_chat_and_message
-def start(update, context, chat: Chat, message: Message):
-    handler = StartHandler(chat=chat, message=message, bot=context.bot)
-    handler.work()
-    handler.reply_to_all()
+def get_callback(EventHandler):
+    @save_chat_and_message
+    def callback(update, context, chat: Chat, message: Message):
+        handler = EventHandler(chat=chat, message=message, bot=context.bot)
+        handler.work()
+        handler.reply_to_all()
 
-
-@save_chat_and_message
-def random_text(update, context, chat: Chat, message: Message):
-    handler = NewItemHandler(chat=chat, message=message, bot=context.bot)
-    handler.work()
-    handler.reply_to_all()
+    return callback
 
 
 def define_routes():
-    dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(CommandHandler("start", get_callback(StartHandler)))
     dispatcher.add_handler(
-        MessageHandler(Filters.text and ~Filters.regex("^[0-9]+$"), random_text)
+        MessageHandler(
+            Filters.text and ~Filters.regex("^[0-9]+$"), get_callback(NewItemHandler)
+        )
     )
 
 

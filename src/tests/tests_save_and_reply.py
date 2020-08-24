@@ -1,6 +1,7 @@
 import pytest
 
-from bot import start
+from bot import get_callback
+from handlers import StartHandler
 from models import Chat, Message
 
 pytestmark = [
@@ -34,9 +35,8 @@ def test_no_messages_by_default():
     assert Message.select().count() == 0
 
 
-@pytest.mark.parametrize("method", (start,))
-def test_chat_created_after_event(execute, raw_message, method):
-    execute(method, raw_message)
+def test_chat_created_after_event(execute, raw_message):
+    execute(get_callback(StartHandler), raw_message)
 
     chat = Chat.select().first()
     assert chat.chat_id == 200500
@@ -46,9 +46,8 @@ def test_chat_created_after_event(execute, raw_message, method):
     assert chat.chat_type == "private"
 
 
-@pytest.mark.parametrize("method", (start,))
-def test_message_created_after_event(chat, execute, raw_message, method):
-    execute(method, raw_message)
+def test_message_created_after_event(chat, execute, raw_message):
+    execute(get_callback(StartHandler), raw_message)
 
     message = Message.select().first()
     assert message.message_id == 48
@@ -57,15 +56,14 @@ def test_message_created_after_event(chat, execute, raw_message, method):
     assert message.date == "2017-07-14 02:40:00+00:00"  # fuken sqlite dates
 
 
-@pytest.mark.parametrize("method", (start,))
-def test_auto_reply(chat, execute, raw_message, method, mock_reply_to_all):
-    execute(method, raw_message)
+def test_auto_reply(chat, execute, raw_message, mock_reply_to_all):
+    execute(get_callback(StartHandler), raw_message)
 
     assert mock_reply_to_all.call_count == 1
 
 
 def test_existed_chat_updates(chat, execute, raw_message):
-    execute(start, raw_message)
+    execute(get_callback(StartHandler), raw_message)
 
     chat = chat.get()
     assert Chat.select().count() == 1
@@ -75,6 +73,6 @@ def test_existed_chat_updates(chat, execute, raw_message):
 def test_add_new_chat_by_id(chat, execute, raw_message):
     raw_message["message"]["chat"]["id"] = 300500
 
-    execute(start, raw_message)
+    execute(get_callback(StartHandler), raw_message)
 
     assert Chat.select().count() == 2
