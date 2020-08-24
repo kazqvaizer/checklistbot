@@ -6,7 +6,7 @@ import pytest
 from telegram.bot import Bot
 from telegram.update import Update
 
-from models import Chat, Message, app_models, db
+from models import Chat, Message, TodoItem, app_models, db
 
 
 @pytest.fixture(scope="function")
@@ -42,6 +42,11 @@ def factory():
         def message(self, **kwargs):
             chat = kwargs.pop("chat", None) or self.chat()
             return Message.create(chat=chat, **kwargs)
+
+        def item(self, **kwargs):
+            chat = kwargs.pop("chat", None) or self.chat()
+            text = kwargs.pop("text", "some")
+            return TodoItem.create(chat=chat, text=text, **kwargs)
 
     return Factory()
 
