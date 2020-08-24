@@ -18,5 +18,6 @@ def item(factory, chat):
 def test_has_no_items_at_all(item, chat):
     assert chat.has_no_items_at_all() is False
 
+
 def test_has_items(chat):
     assert chat.has_no_items_at_all() is True

@@ -1,10 +1,10 @@
 import logging
 
 from envparse import env
-from telegram.ext import CommandHandler, Updater
+from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
 
 from decorators import save_chat_and_message
-from handlers import StartHandler
+from handlers import NewItemHandler, StartHandler
 from models import Chat, Message
 
 logging.basicConfig(
@@ -26,8 +26,18 @@ def start(update, context, chat: Chat, message: Message):
     handler.reply_to_all()
 
 
+@save_chat_and_message
+def random_text(update, context, chat: Chat, message: Message):
+    handler = NewItemHandler(chat=chat, message=message, bot=context.bot)
+    handler.work()
+    handler.reply_to_all()
+
+
 def define_routes():
     dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(
+        MessageHandler(Filters.text and ~Filters.regex("^[0-9]+$"), random_text)
+    )
 
 
 if __name__ == "__main__":
