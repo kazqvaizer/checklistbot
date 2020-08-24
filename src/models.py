@@ -39,6 +39,9 @@ class Chat(BaseModel):
     def has_not_checked_items(self) -> bool:
         return self.todo_items.select().where(TodoItem.is_checked == False).exists()
 
+    def has_no_items_at_all(self) -> bool:
+        return not self.todo_items.select().exists()
+
     def has_no_recent_activity(self) -> bool:
         threshold_time = _utcnow() - timedelta(hours=2)
         query = self.todo_items.select()
