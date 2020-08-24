@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import peewee as pw
 from envparse import env
@@ -38,6 +38,20 @@ class Chat(BaseModel):
 
     def has_not_checked_items(self) -> bool:
         return self.todo_items.select().where(TodoItem.is_checked == False).exists()
+
+    def has_no_recent_activity(self) -> bool:
+        threshold_time = _utcnow() - timedelta(hours=2)
+        query = self.todo_items.select()
+
+        recently_modified = query.where(TodoItem.modified > threshold_time).exists()
+        if recently_modified:
+            return False
+
+        recently_created = query.where(TodoItem.created > threshold_time).exists()
+        if recently_created:
+            return False
+
+        return True
 
 
 class Message(BaseModel):
