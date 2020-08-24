@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import List
 
-from telegram import Bot
+from telegram import Bot, ParseMode
 
 from models import Chat, Message
 
@@ -38,7 +38,9 @@ class Replier:
             return
 
         for reply in self.get_replies():
-            self.bot.send_message(chat_id=reply.chat.chat_id, text=reply.text)
+            self.bot.send_message(
+                chat_id=reply.chat.chat_id, text=reply.text, parse_mode=ParseMode.HTML,
+            )
 
         self.clean_all()
 

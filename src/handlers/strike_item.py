@@ -22,7 +22,7 @@ class StrikeItemHandler(EventHandler):
         parts = []
         for index, item in enumerate(self.chat.items, 1):
             if item.is_checked:
-                parts.append(f"{index}. ~~{item.text}~~")
+                parts.append(f"{index}. <s>{item.text}</s>")
             else:
                 parts.append(f"{index}. {item.text}")
 
