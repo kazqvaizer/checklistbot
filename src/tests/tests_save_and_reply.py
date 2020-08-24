@@ -56,10 +56,10 @@ def test_message_created_after_event(chat, execute, raw_message):
     assert message.date == "2017-07-14 02:40:00+00:00"  # fuken sqlite dates
 
 
-def test_auto_reply(chat, execute, raw_message, mock_reply_to_all):
+def test_auto_reply(chat, execute, raw_message, mock_reply):
     execute(get_callback(StartHandler), raw_message)
 
-    assert mock_reply_to_all.call_count == 1
+    assert mock_reply.call_count == 1
 
 
 def test_existed_chat_updates(chat, execute, raw_message):

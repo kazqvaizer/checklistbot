@@ -44,18 +44,18 @@ def test_reply_fields(chat, replier):
 def test_send_replies_as_messages(replier, chat, mock_send_message):
     replier.add_reply(chat, "Hello!")
 
-    replier.reply_to_all()
+    replier.reply()
 
     assert mock_send_message.call_count == 1
     assert mock_send_message.call_args[1]["chat_id"] == chat.chat_id
     assert mock_send_message.call_args[1]["text"] == "Hello!"
 
 
-def test_reply_to_all_messages(replier, chat, ya_chat, mock_send_message):
+def test_reply_messages(replier, chat, ya_chat, mock_send_message):
     replier.add_reply(chat, "Hello!")
     replier.add_reply(ya_chat, "Cunt!")
 
-    replier.reply_to_all()
+    replier.reply()
 
     assert mock_send_message.call_count == 2
 
@@ -69,7 +69,7 @@ def test_reply_to_all_messages(replier, chat, ya_chat, mock_send_message):
 def test_clean_messages_after_reply(replier, chat):
     replier.add_reply(chat, "Hello!")
 
-    replier.reply_to_all()
+    replier.reply()
 
     assert len(replier.get_replies()) == 0
 
@@ -78,6 +78,6 @@ def test_no_replies_if_no_bot(chat, mock_send_message):
     replier = Replier()  # No bot here
     replier.add_reply(chat, "Hello!")
 
-    replier.reply_to_all()
+    replier.reply()
 
     assert mock_send_message.call_count == 0

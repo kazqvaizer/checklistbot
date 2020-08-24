@@ -24,7 +24,7 @@ def get_callback(EventHandler):
     def callback(update, context, chat: Chat, message: Message):
         handler = EventHandler(chat=chat, message=message, bot=context.bot)
         handler.work()
-        handler.reply_to_all()
+        handler.reply()
 
     return callback
 

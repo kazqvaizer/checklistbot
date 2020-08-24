@@ -33,7 +33,7 @@ class Replier:
     def clean_all(self):
         self._replies = []
 
-    def reply_to_all(self):
+    def reply(self):
         if not self.bot:
             return
 
@@ -56,6 +56,6 @@ class EventHandler(ABC):
     def work(self):
         """Do some work, add replies to replier..."""
 
-    def reply_to_all(self):
+    def reply(self):
         """Reply to all generated messages."""
-        self.replier.reply_to_all()
+        self.replier.reply()
