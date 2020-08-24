@@ -4,7 +4,7 @@ from envparse import env
 from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
 
 from decorators import save_chat_and_message
-from handlers import NewItemHandler, StartHandler
+from handlers import NewItemHandler, StartHandler, StrikeItemHandler
 from models import Chat, Message
 
 logging.basicConfig(
@@ -34,6 +34,11 @@ def define_routes():
     dispatcher.add_handler(
         MessageHandler(
             Filters.text and ~Filters.regex("^[0-9]+$"), get_callback(NewItemHandler)
+        )
+    )
+    dispatcher.add_handler(
+        MessageHandler(
+            Filters.text and Filters.regex("^[0-9]+$"), get_callback(StrikeItemHandler)
         )
     )
 

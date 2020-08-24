@@ -31,14 +31,14 @@ def handler(chat, message):
 def test_add_new_item(exist_item, chat, handler):
     handler.work()
 
-    items = chat.todo_items.select()
+    items = chat.items
     assert len(items) == 2
 
 
 def test_new_and_already_exist_items(exist_item, chat, handler):
     handler.work()
 
-    items = chat.todo_items.select()
+    items = chat.items
     assert items[0] == exist_item
     assert items[1].text == "Eat 8.5 oranges!"  # New item
 

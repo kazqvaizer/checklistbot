@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import Optional
 
 import peewee as pw
 from envparse import env
@@ -33,18 +34,31 @@ class Chat(BaseModel):
     first_name = pw.CharField(null=True)
     last_name = pw.CharField(null=True)
 
-    def get_name(self):
+    @property
+    def items(self) -> pw.Select:
+        return self.todo_items.select().order_by("id")
+
+    def get_item_by_index(self, index: int) -> Optional["TodoItem"]:
+        if index <= 0:  # Yeap. This index starts from 1.
+            return
+
+        try:
+            return self.items[index - 1]
+        except IndexError:
+            pass
+
+    def get_name(self) -> str:
         return self.first_name or self.username or ""
 
     def has_not_checked_items(self) -> bool:
-        return self.todo_items.select().where(TodoItem.is_checked == False).exists()
+        return self.items.where(TodoItem.is_checked == False).exists()
 
     def has_no_items_at_all(self) -> bool:
-        return not self.todo_items.select().exists()
+        return not self.items.exists()
 
     def has_no_recent_activity(self) -> bool:
         threshold_time = _utcnow() - timedelta(hours=2)
-        query = self.todo_items.select()
+        query = self.items
 
         recently_modified = query.where(TodoItem.modified > threshold_time).exists()
         if recently_modified:

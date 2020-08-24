@@ -12,7 +12,7 @@ class NewItemHandler(EventHandler):
         TodoItem.create(chat=self.chat, text=self.message.text)
 
         parts = []
-        for index, item in enumerate(self.chat.todo_items.select(), 1):
+        for index, item in enumerate(self.chat.items, 1):
             parts.append(f"{index}. {item.text}")
 
         self.replier.add_reply(self.chat, text="\n".join(parts))
