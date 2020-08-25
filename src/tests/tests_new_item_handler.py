@@ -43,6 +43,16 @@ def test_new_and_already_exist_items(exist_item, chat, handler):
     assert items[1].text == "Eat 8.5 oranges!"  # New item
 
 
+def test_escape_html(exist_item, chat, handler, message):
+    message.text = "<s><html></asd> wow"
+    message.save()
+
+    handler.work()
+
+    items = chat.items
+    assert "<s><html></asd>" not in items[1].text
+
+
 def test_list_all_items_after_item_addition(exist_item, chat, handler):
     handler.work()
 

@@ -1,5 +1,6 @@
-from handlers.base import EventHandler
 from messages import registry
+
+from .base import EventHandler
 
 
 class StartHandler(EventHandler):

@@ -1,5 +1,6 @@
-from handlers.base import EventHandler
 from models import TodoItem
+
+from .base import EventHandler
 
 
 class StrikeItemHandler(EventHandler):
@@ -22,7 +23,7 @@ class StrikeItemHandler(EventHandler):
         parts = []
         for index, item in enumerate(self.chat.items, 1):
             if item.is_checked:
-                parts.append(f"{index}. <s>{item.text}</s>")
+                parts.append(f"<s>{index}. {item.text}</s>")
             else:
                 parts.append(f"{index}. {item.text}")
 

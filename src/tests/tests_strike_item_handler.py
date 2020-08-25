@@ -76,7 +76,7 @@ def test_positions_are_actually_struck(exist_items, chat, handler):
 
     reply = handler.replier.get_replies()[0]
     assert "1. Buy 10 oranges!" in reply.text
-    assert "2. <s>Buy 10 apples!</s>" in reply.text
+    assert "<s>2. Buy 10 apples!</s>" in reply.text
     assert "3. Buy 10 fucwits!" in reply.text
 
 

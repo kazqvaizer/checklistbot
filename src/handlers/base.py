@@ -37,9 +37,11 @@ class Replier:
         if not self.bot:
             return
 
-        for reply in self.get_replies():
+        for single_reply in self.get_replies():
             self.bot.send_message(
-                chat_id=reply.chat.chat_id, text=reply.text, parse_mode=ParseMode.HTML,
+                chat_id=single_reply.chat.chat_id,
+                text=single_reply.text,
+                parse_mode=ParseMode.HTML,
             )
 
         self.clean_all()
