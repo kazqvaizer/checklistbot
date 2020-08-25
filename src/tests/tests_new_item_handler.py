@@ -65,6 +65,5 @@ def test_also_add_help_messages_if_no_recent_activity(chat, handler):
     handler.work()
 
     replies = handler.replier.get_replies()
-    assert "actions" in replies[0].text
-    assert "index" in replies[1].text
-    assert "oranges!" in replies[2].text  # The list
+    assert "index" in replies[0].text
+    assert "oranges!" in replies[1].text  # The list
