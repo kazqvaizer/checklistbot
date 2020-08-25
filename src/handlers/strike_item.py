@@ -20,11 +20,4 @@ class StrikeItemHandler(EventHandler):
         if not self.chat.has_not_checked_items():
             TodoItem.delete().where(TodoItem.chat == self.chat).execute()
 
-        parts = []
-        for index, item in enumerate(self.chat.items, 1):
-            if item.is_checked:
-                parts.append(f"<s>{index}. {item.text}</s>")
-            else:
-                parts.append(f"{index}. {item.text}")
-
-        self.replier.add_reply(self.chat, text="\n".join(parts))
+        self.replier.add_reply(self.chat, text=self.chat.get_formatted_items())

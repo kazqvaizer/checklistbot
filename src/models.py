@@ -36,7 +36,20 @@ class Chat(BaseModel):
 
     @property
     def items(self) -> pw.Select:
-        return self.todo_items.select().order_by("id")
+        return self.todo_items.select().order_by(TodoItem.id.asc())
+
+    def get_formatted_items(self) -> str:
+        lines = []
+
+        for index, item in enumerate(self.items, 1):
+            line = f"{index}. {item.text}"
+
+            if item.is_checked:
+                line = f"<s>{line}</s>"
+
+            lines.append(line)
+
+        return "\n".join(lines)
 
     def get_item_by_index(self, index: int) -> Optional["TodoItem"]:
         if index <= 0:  # Yeap. This index starts from 1.

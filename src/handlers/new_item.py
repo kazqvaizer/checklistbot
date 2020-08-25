@@ -14,8 +14,4 @@ class NewItemHandler(EventHandler):
 
         TodoItem.create(chat=self.chat, text=escape(self.message.text))
 
-        parts = []
-        for index, item in enumerate(self.chat.items, 1):
-            parts.append(f"{index}. {item.text}")
-
-        self.replier.add_reply(self.chat, text="\n".join(parts))
+        self.replier.add_reply(self.chat, text=self.chat.get_formatted_items())
