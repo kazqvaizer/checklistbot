@@ -1,3 +1,4 @@
+from messages import registry
 from models import TodoItem
 
 from .base import EventHandler
@@ -5,13 +6,16 @@ from .base import EventHandler
 
 class StrikeItemHandler(EventHandler):
     def work(self):
-        index = int(self.message.text)
-
         if self.chat.has_no_items_at_all():
+            self.replier.add_reply(self.chat, text=registry["no_items_to_check_off"])
+            self.replier.add_reply(self.chat, text=registry["to_start_help"])
+
             return
 
-        item = self.chat.get_item_by_index(index)
-        if not item:
+        item = self.chat.get_item_by_index(int(self.message.text))
+        if item is None:
+            self.replier.add_reply(self.chat, text=registry["no_index"])
+
             return
 
         item.is_checked = not item.is_checked  # Toggle
@@ -19,5 +23,11 @@ class StrikeItemHandler(EventHandler):
 
         if not self.chat.has_not_checked_items():
             TodoItem.delete().where(TodoItem.chat == self.chat).execute()
+
+            self.replier.add_reply(self.chat, text=registry["congrats"])
+            self.replier.add_reply(self.chat, text=registry["nice_work"])
+            self.replier.add_reply(self.chat, text=registry["to_start_help"])
+
+            return
 
         self.replier.add_reply(self.chat, text=self.chat.get_formatted_items())
