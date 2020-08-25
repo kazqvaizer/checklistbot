@@ -22,6 +22,10 @@ class StrikeItemHandler(EventHandler):
         item.save()
 
         if not self.chat.has_not_checked_items():
+
+            # Show all struck items to get more dopamine
+            self.replier.add_reply(self.chat.get_formatted_items())
+
             TodoItem.delete().where(TodoItem.chat == self.chat).execute()
 
             self.replier.add_reply(registry["congrats"])
