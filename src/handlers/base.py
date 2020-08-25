@@ -20,11 +20,18 @@ class Replier:
 
     _replies: List[Reply]
 
-    def __init__(self, bot: Bot = None):
+    def __init__(self, bot: Bot = None, default_chat: Chat = None):
         self.bot = bot
+        self.default_chat = default_chat
         self._replies = []
 
-    def add_reply(self, chat: Chat, text: str):
+    def add_reply(self, text: str, chat: Chat = None):
+        if not chat:
+            chat = self.default_chat
+
+        if not chat:
+            raise ValueError("You should define chat in reply!")
+
         self._replies.append(Reply(chat=chat, text=text))
 
     def get_replies(self):
@@ -35,7 +42,7 @@ class Replier:
 
     def reply(self):
         if not self.bot:
-            return
+            raise ValueError("You should define bot for reply!")
 
         for single_reply in self.get_replies():
             self.bot.send_message(
@@ -54,7 +61,7 @@ class EventHandler(ABC):
         self.chat = chat
         self.message = message
 
-        self.replier = Replier(bot)
+        self.replier = Replier(bot, default_chat=self.chat)
 
     @abstractmethod
     def work(self):
