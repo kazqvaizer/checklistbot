@@ -14,8 +14,8 @@ def save_chat_and_message(fn):
         chat, created = Chat.get_or_create(chat_id=data.pop("id", None), defaults=data)
 
         if not created:
-            chat.update(**data).execute()
-            chat = chat.get()
+            Chat.update(**data).where(Chat.id == chat.id).execute()
+            chat = chat.refresh()
 
         return chat
 

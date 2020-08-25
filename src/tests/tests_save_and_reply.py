@@ -65,9 +65,19 @@ def test_auto_reply(chat, execute, raw_message, mock_reply):
 def test_existed_chat_updates(chat, execute, raw_message):
     execute(get_callback(StartHandler), raw_message)
 
-    chat = chat.get()
     assert Chat.select().count() == 1
-    assert chat.username == "boi"
+    assert chat.refresh().username == "boi"
+
+
+def test_leave_other_chats_intact_after_update(factory, chat, execute, raw_message):
+    ya_chat = factory.chat(username="jenkins")
+
+    execute(get_callback(StartHandler), raw_message)
+
+    chat = chat.refresh()
+    ya_chat = ya_chat.refresh()
+    assert chat.refresh().username == "boi"
+    assert ya_chat.refresh().username == "jenkins"
 
 
 def test_add_new_chat_by_id(chat, execute, raw_message):
@@ -76,3 +86,13 @@ def test_add_new_chat_by_id(chat, execute, raw_message):
     execute(get_callback(StartHandler), raw_message)
 
     assert Chat.select().count() == 2
+
+
+def test_add_new_messages_to_new_chat(chat, execute, raw_message):
+    raw_message["message"]["chat"]["id"] = 300500
+
+    execute(get_callback(StartHandler), raw_message)
+
+    new_chat = Chat.select()[1]
+    assert chat.messages.count() == 0
+    assert new_chat.messages.count() == 1
