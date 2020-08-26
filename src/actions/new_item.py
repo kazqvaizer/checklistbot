@@ -13,7 +13,7 @@ class NewItemAction(Action):
         return [line.strip() for line in text.split("\n") if line.strip()]
 
     def do(self):
-        if self.chat.has_no_recent_activity():
+        if self.chat.has_no_recent_activity:
             self.reply(registry["to_check_off_help"])
 
         for text in self.cleaned_lines():

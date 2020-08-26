@@ -16,16 +16,16 @@ def item(factory, chat):
 
 
 def test_has_non_checked_items(item, chat):
-    assert chat.has_not_checked_items() is True
+    assert chat.has_not_checked_items is True
 
 
 def test_has_no_non_checked_items(item, chat):
     item.is_checked = True
     item.save()
 
-    assert chat.has_not_checked_items() is False
+    assert chat.has_not_checked_items is False
 
 
 def test_no_items_no_non_checked(chat):
 
-    assert chat.has_not_checked_items() is False
+    assert chat.has_not_checked_items is False

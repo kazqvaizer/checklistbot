@@ -20,21 +20,21 @@ def item(factory, chat):
 
 
 def test_has_no_recent_activity(item, chat):
-    assert chat.has_no_recent_activity() is True
+    assert chat.has_no_recent_activity is True
 
 
 def test_has_recent_modified_activity(item, chat):
     item.is_checked = True
     item.save()
 
-    assert chat.has_no_recent_activity() is False
+    assert chat.has_no_recent_activity is False
 
 
 def test_has_recent_create_activity(factory, chat):
     factory.item(chat=chat)
 
-    assert chat.has_no_recent_activity() is False
+    assert chat.has_no_recent_activity is False
 
 
 def test_no_items_no_activity(chat):
-    assert chat.has_no_recent_activity() is True
+    assert chat.has_no_recent_activity is True

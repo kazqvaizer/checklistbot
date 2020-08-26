@@ -13,6 +13,15 @@ def _utcnow():
     return datetime.utcnow()
 
 
+def _get_recent_threshold():
+    return _utcnow() - timedelta(hours=2)
+
+
+def _format_item(index: int, item: "TodoItem",) -> str:
+    line = f"{index}. {item.text}"
+    return f"<s>{line}</s>" if item.is_checked else line
+
+
 class BaseModel(pw.Model):
     created = pw.DateTimeField(default=_utcnow)
     modified = pw.DateTimeField(null=True)
@@ -38,50 +47,31 @@ class Chat(BaseModel):
     def items(self) -> pw.Select:
         return self.todo_items.select().order_by(TodoItem.id.asc())
 
-    def get_formatted_items(self) -> str:
-        lines = []
-
-        for index, item in enumerate(self.items, 1):
-            line = f"{index}. {item.text}"
-
-            if item.is_checked:
-                line = f"<s>{line}</s>"
-
-            lines.append(line)
-
-        return "\n".join(lines)
-
-    def get_item_by_index(self, index: int) -> Optional["TodoItem"]:
-        if index <= 0:  # Yeap. This index starts from 1.
-            return
-
-        try:
-            return self.items[index - 1]
-        except IndexError:
-            pass
-
-    def get_name(self) -> str:
-        return self.first_name or self.username or ""
-
+    @property
     def has_not_checked_items(self) -> bool:
         return self.items.where(TodoItem.is_checked == False).exists()
 
+    @property
     def has_no_items_at_all(self) -> bool:
         return not self.items.exists()
 
+    @property
+    def has_recently_modified_items(self) -> bool:
+        return self.items.where(TodoItem.modified > _get_recent_threshold()).exists()
+
+    @property
+    def has_recently_created_items(self) -> bool:
+        return self.items.where(TodoItem.created > _get_recent_threshold()).exists()
+
+    @property
     def has_no_recent_activity(self) -> bool:
-        threshold_time = _utcnow() - timedelta(hours=2)
-        query = self.items
+        return not (self.has_recently_modified_items or self.has_recently_created_items)
 
-        recently_modified = query.where(TodoItem.modified > threshold_time).exists()
-        if recently_modified:
-            return False
+    def get_item_by_index(self, index: int) -> Optional["TodoItem"]:
+        return self.items.offset(index - 1).first() if index > 0 else None
 
-        recently_created = query.where(TodoItem.created > threshold_time).exists()
-        if recently_created:
-            return False
-
-        return True
+    def get_formatted_items(self) -> str:
+        return "\n".join([_format_item(*args) for args in enumerate(self.items, 1)])
 
 
 class Message(BaseModel):
