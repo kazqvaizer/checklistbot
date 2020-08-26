@@ -29,7 +29,7 @@ def mock_send_message(mocker):
 
 @pytest.fixture
 def mock_reply(mocker):
-    return mocker.patch("handlers.base.Replier.reply")
+    return mocker.patch("actions.base.Replier.reply")
 
 
 @pytest.fixture

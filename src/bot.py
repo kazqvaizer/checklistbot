@@ -3,8 +3,8 @@ import logging
 from envparse import env
 from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
 
+from actions import NewItemAction, StartAction, StrikeItemAction
 from decorators import save_chat_and_message
-from handlers import NewItemHandler, StartHandler, StrikeItemHandler
 from models import Chat, Message
 
 logging.basicConfig(
@@ -19,10 +19,10 @@ updater = Updater(token=env("TELEGRAM_BOT_TOKEN"), use_context=True)
 dispatcher = updater.dispatcher
 
 
-def get_callback(EventHandler):
+def get_callback(Action):
     @save_chat_and_message
     def callback(update, context, chat: Chat, message: Message):
-        handler = EventHandler(chat=chat, message=message, bot=context.bot)
+        handler = Action(chat=chat, message=message, bot=context.bot)
         handler.work()
         handler.reply()
 
@@ -30,15 +30,15 @@ def get_callback(EventHandler):
 
 
 def define_routes():
-    dispatcher.add_handler(CommandHandler("start", get_callback(StartHandler)))
+    dispatcher.add_handler(CommandHandler("start", get_callback(StartAction)))
     dispatcher.add_handler(
         MessageHandler(
-            Filters.text and ~Filters.regex("^[0-9]+$"), get_callback(NewItemHandler)
+            Filters.text and ~Filters.regex("^[0-9]+$"), get_callback(NewItemAction)
         )
     )
     dispatcher.add_handler(
         MessageHandler(
-            Filters.text and Filters.regex("^[0-9]+$"), get_callback(StrikeItemHandler)
+            Filters.text and Filters.regex("^[0-9]+$"), get_callback(StrikeItemAction)
         )
     )
 

@@ -4,10 +4,10 @@ from typing import List
 from messages import registry
 from models import TodoItem
 
-from .base import EventHandler
+from .base import Action
 
 
-class NewItemHandler(EventHandler):
+class NewItemAction(Action):
     def cleaned_lines(self) -> List[str]:
         text = escape(self.message.text)
         return [line.strip() for line in text.split("\n") if line.strip()]

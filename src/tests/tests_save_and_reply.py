@@ -1,7 +1,7 @@
 import pytest
 
+from actions import StartAction
 from bot import get_callback
-from handlers import StartHandler
 from models import Chat, Message
 
 pytestmark = [
@@ -36,7 +36,7 @@ def test_no_messages_by_default():
 
 
 def test_chat_created_after_event(execute, raw_message):
-    execute(get_callback(StartHandler), raw_message)
+    execute(get_callback(StartAction), raw_message)
 
     chat = Chat.select().first()
     assert chat.chat_id == 200500
@@ -47,7 +47,7 @@ def test_chat_created_after_event(execute, raw_message):
 
 
 def test_message_added_after_event(execute, raw_message):
-    execute(get_callback(StartHandler), raw_message)
+    execute(get_callback(StartAction), raw_message)
 
     chat = Chat.select().first()
     message = Message.select().first()
@@ -58,7 +58,7 @@ def test_message_added_after_event(execute, raw_message):
 
 
 def test_message_added_to_existed_chat_after_event(chat, execute, raw_message):
-    execute(get_callback(StartHandler), raw_message)
+    execute(get_callback(StartAction), raw_message)
 
     message = Message.select().first()
     assert message.chat == chat
@@ -67,7 +67,7 @@ def test_message_added_to_existed_chat_after_event(chat, execute, raw_message):
 def test_add_new_messages_to_new_chat(chat, execute, raw_message):
     raw_message["message"]["chat"]["id"] = 300500
 
-    execute(get_callback(StartHandler), raw_message)
+    execute(get_callback(StartAction), raw_message)
 
     new_chat = Chat.select()[1]
     assert chat.messages.count() == 0
@@ -77,12 +77,12 @@ def test_add_new_messages_to_new_chat(chat, execute, raw_message):
 def test_add_new_chat_by_id(chat, execute, raw_message):
     raw_message["message"]["chat"]["id"] = 300500
 
-    execute(get_callback(StartHandler), raw_message)
+    execute(get_callback(StartAction), raw_message)
 
     assert Chat.select().count() == 2
 
 
 def test_auto_reply(chat, execute, raw_message, mock_reply):
-    execute(get_callback(StartHandler), raw_message)
+    execute(get_callback(StartAction), raw_message)
 
     assert mock_reply.call_count == 1

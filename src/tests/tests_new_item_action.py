@@ -1,6 +1,6 @@
 import pytest
 
-from handlers import NewItemHandler
+from actions import NewItemAction
 
 pytestmark = [
     pytest.mark.usefixtures("use_db"),
@@ -20,7 +20,7 @@ def message(factory, chat):
 
 @pytest.fixture
 def handler(chat, message):
-    return NewItemHandler(chat, message)
+    return NewItemAction(chat, message)
 
 
 def test_no_items_by_default(chat, handler):

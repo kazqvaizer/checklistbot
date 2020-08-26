@@ -1,6 +1,6 @@
 import pytest
 
-from handlers.base import Replier
+from actions.base import Replier
 
 pytestmark = [
     pytest.mark.usefixtures("use_db"),

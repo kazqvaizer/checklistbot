@@ -1,6 +1,6 @@
 import pytest
 
-from handlers import StartHandler
+from actions import StartAction
 
 pytestmark = [
     pytest.mark.usefixtures("use_db"),
@@ -14,7 +14,7 @@ def chat(factory):
 
 @pytest.fixture
 def handler(chat, factory):
-    return StartHandler(chat, factory.message())
+    return StartAction(chat, factory.message())
 
 
 def test_no_replies_before_default(handler):

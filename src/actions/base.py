@@ -54,7 +54,7 @@ class Replier:
         self.clean_all()
 
 
-class EventHandler(ABC):
+class Action(ABC):
     """Base event handler."""
 
     def __init__(self, chat: Chat, message: Message, bot: Bot = None):

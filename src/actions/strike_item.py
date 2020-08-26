@@ -1,10 +1,10 @@
 from messages import registry
 from models import TodoItem
 
-from .base import EventHandler
+from .base import Action
 
 
-class StrikeItemHandler(EventHandler):
+class StrikeItemAction(Action):
     def work(self):
         if self.chat.has_no_items_at_all():
             self.replier.add_reply(registry["no_items_to_check_off"])

@@ -1,8 +1,8 @@
 from messages import registry
 
-from .base import EventHandler
+from .base import Action
 
 
-class StartHandler(EventHandler):
+class StartAction(Action):
     def work(self):
         self.replier.add_reply(registry["to_start_help"])

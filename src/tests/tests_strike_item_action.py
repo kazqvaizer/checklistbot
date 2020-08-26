@@ -1,6 +1,6 @@
 import pytest
 
-from handlers import StrikeItemHandler
+from actions import StrikeItemAction
 from models import TodoItem
 
 pytestmark = [
@@ -24,7 +24,7 @@ def exist_items(factory, chat):
 
 @pytest.fixture
 def handler(chat, factory):
-    return lambda index: StrikeItemHandler(chat, factory.message(chat=chat, text=index))
+    return lambda index: StrikeItemAction(chat, factory.message(chat=chat, text=index))
 
 
 def test_all_non_checked_by_default(exist_items, chat):
