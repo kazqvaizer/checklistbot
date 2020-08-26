@@ -1,5 +1,3 @@
-from models import TodoItem
-
 from .base import Action
 
 
@@ -25,10 +23,10 @@ class StrikeItemAction(Action):
             # Show all struck items to get more dopamine
             self.reply(self.chat.get_formatted_items())
 
-            TodoItem.delete().where(TodoItem.chat == self.chat).execute()
-
             self.common_reply("congrats")
             self.common_reply("to_start_help")
+
+            self.chat.delete_items()
 
             return
 

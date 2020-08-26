@@ -19,6 +19,10 @@ _registry = {
         "en": "Sorry I cannot find item with this index.",
         "ru": "Извините, но такой индекс не найден.",
     },
+    "deleted": {
+        "en": "Your previous list has just been deleted!",
+        "ru": "Ваш предыдущий список дел был удален!",
+    },
 }
 
 

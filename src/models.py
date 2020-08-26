@@ -74,6 +74,9 @@ class Chat(BaseModel):
     def get_formatted_items(self) -> str:
         return "\n".join([_format_item(*args) for args in enumerate(self.items, 1)])
 
+    def delete_items(self):
+        TodoItem.delete().where(TodoItem.chat == self).execute()
+
 
 class Message(BaseModel):
     message_id = pw.IntegerField(null=True)
