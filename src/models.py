@@ -26,9 +26,6 @@ class BaseModel(pw.Model):
 
         return super().save(*args, **kwargs)
 
-    def refresh(self):
-        return self.__class__.get(self._pk_expr())
-
 
 class Chat(BaseModel):
     chat_id = pw.IntegerField(unique=True)

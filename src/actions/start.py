@@ -4,5 +4,5 @@ from .base import Action
 
 
 class StartAction(Action):
-    def work(self):
-        self.replier.add_reply(registry["to_start_help"])
+    def do(self):
+        self.reply(registry["to_start_help"])

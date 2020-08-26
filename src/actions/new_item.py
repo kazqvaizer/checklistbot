@@ -12,11 +12,11 @@ class NewItemAction(Action):
         text = escape(self.message.text)
         return [line.strip() for line in text.split("\n") if line.strip()]
 
-    def work(self):
+    def do(self):
         if self.chat.has_no_recent_activity():
-            self.replier.add_reply(registry["to_check_off_help"])
+            self.reply(registry["to_check_off_help"])
 
         for text in self.cleaned_lines():
             TodoItem.create(chat=self.chat, text=text)
 
-        self.replier.add_reply(self.chat.get_formatted_items())
+        self.reply(self.chat.get_formatted_items())

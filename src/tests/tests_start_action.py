@@ -8,21 +8,17 @@ pytestmark = [
 
 
 @pytest.fixture
-def chat(factory):
-    return factory.chat(username="JohnyBoi")
+def message(factory):
+    return factory.message()
 
 
 @pytest.fixture
-def handler(chat, factory):
-    return StartAction(chat, factory.message())
+def action(message, telegram_bot):
+    return StartAction(message, telegram_bot)
 
 
-def test_no_replies_before_default(handler):
-    assert len(handler.replier.get_replies()) == 0
+def test_replies_with_help(action, mock_reply):
+    action.do()
 
-
-def test_replies(handler):
-    handler.work()
-
-    replies = handler.replier.get_replies()
-    assert len(replies) == 1
+    assert mock_reply.call_count == 1
+    assert "start a new" in mock_reply.call_args[0][0]

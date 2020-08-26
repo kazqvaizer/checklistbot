@@ -23,8 +23,10 @@ def exist_items(factory, chat):
 
 
 @pytest.fixture
-def handler(chat, factory):
-    return lambda index: StrikeItemAction(chat, factory.message(chat=chat, text=index))
+def action(chat, factory, telegram_bot):
+    return lambda index: StrikeItemAction(
+        factory.message(chat=chat, text=index), telegram_bot
+    )
 
 
 def test_all_non_checked_by_default(exist_items, chat):
@@ -32,61 +34,61 @@ def test_all_non_checked_by_default(exist_items, chat):
     assert chat.items.where(TodoItem.is_checked == True).count() == 0
 
 
-def test_change_checked_flag_by_text_from_message(exist_items, chat, handler):
-    handler(index="2").work()
+def test_change_checked_flag_by_text_from_message(exist_items, chat, action):
+    action(index="2").do()
 
     item = chat.items.where(TodoItem.is_checked == True).first()
     assert item == exist_items[1]  # Correct second item
     assert item.is_checked is True
 
 
-def test_strike_only_one_item_by_index_from_message(exist_items, chat, handler):
-    handler(index="2").work()
+def test_strike_only_one_item_by_index_from_message(exist_items, chat, action):
+    action(index="2").do()
 
     assert chat.items.where(TodoItem.is_checked == False).count() == 2
     assert chat.items.where(TodoItem.is_checked == True).count() == 1
 
 
-def test_toggle_item_by_second_strike_with_same_text(exist_items, chat, handler):
-    handler(index="2").work()
-    handler(index="2").work()
+def test_toggle_item_by_second_strike_with_same_text(exist_items, chat, action):
+    action(index="2").do()
+    action(index="2").do()
 
     assert chat.items.where(TodoItem.is_checked == False).count() == 3
     assert chat.items.where(TodoItem.is_checked == True).count() == 0
 
 
-def test_no_strikes_if_bad_index(exist_items, chat, handler):
-    handler(index="100500").work()
+def test_no_strikes_if_bad_index(exist_items, chat, action):
+    action(index="100500").do()
 
     assert chat.items.where(TodoItem.is_checked == False).count() == 3
 
 
-def test_if_all_messages_struck_delete_them(exist_items, chat, handler):
-    handler(index="1").work()
-    handler(index="2").work()
-    handler(index="3").work()
+def test_if_all_messages_struck_delete_them(exist_items, chat, action):
+    action(index="1").do()
+    action(index="2").do()
+    action(index="3").do()
 
     assert chat.items.count() == 0
 
 
-def test_positions_are_actually_struck(exist_items, chat, handler):
-    handler = handler(index="2")
+def test_positions_are_actually_struck(exist_items, chat, action, mock_reply):
+    action = action(index="2")
 
-    handler.work()
+    action.do()
 
-    reply = handler.replier.get_replies()[0]
-    assert "1. Buy 10 oranges!" in reply.text
-    assert "<s>2. Buy 10 apples!</s>" in reply.text
-    assert "3. Buy 10 fucwits!" in reply.text
+    reply = mock_reply.call_args[0][0]
+    assert "1. Buy 10 oranges!" in reply
+    assert "<s>2. Buy 10 apples!</s>" in reply
+    assert "3. Buy 10 fucwits!" in reply
 
 
-def test_struck_back(exist_items, chat, handler):
-    handler(index="2").work()  # Stand-alone to not mess with replies
+def test_struck_back(exist_items, chat, action, mock_reply):
+    action(index="2").do()  # Stand-alone to not mess with replies
 
-    handler = handler(index="2")
-    handler.work()
+    action = action(index="2")
+    action.do()
 
-    reply = handler.replier.get_replies()[0]
-    assert "1. Buy 10 oranges!" in reply.text
-    assert "2. Buy 10 apples!" in reply.text
-    assert "3. Buy 10 fucwits!" in reply.text
+    reply = mock_reply.call_args[0][0]
+    assert "1. Buy 10 oranges!" in reply
+    assert "2. Buy 10 apples!" in reply
+    assert "3. Buy 10 fucwits!" in reply

@@ -1,72 +1,68 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import List
 
 from telegram import Bot, ParseMode
+from telegram.ext.callbackcontext import CallbackContext
+from telegram.update import Update
 
 from models import Chat, Message
 
 
-@dataclass
-class Reply:
-    """Single text reply to chat."""
-
-    chat: Chat
-    text: str
-
-
-class Replier:
-    """Collects all replies."""
-
-    _replies: List[Reply]
-
-    def __init__(self, bot: Bot = None, default_chat: Chat = None):
-        self.bot = bot
-        self.default_chat = default_chat
-        self._replies = []
-
-    def add_reply(self, text: str, chat: Chat = None):
-        if not chat:
-            chat = self.default_chat
-
-        if not chat:
-            raise ValueError("You should define chat in reply!")
-
-        self._replies.append(Reply(chat=chat, text=text))
-
-    def get_replies(self):
-        return self._replies
-
-    def clean_all(self):
-        self._replies = []
-
-    def reply(self):
-        if not self.bot:
-            raise ValueError("You should define bot for reply!")
-
-        for single_reply in self.get_replies():
-            self.bot.send_message(
-                chat_id=single_reply.chat.chat_id,
-                text=single_reply.text,
-                parse_mode=ParseMode.HTML,
-            )
-
-        self.clean_all()
-
-
 class Action(ABC):
-    """Base event handler."""
+    """
+    Base action.
 
-    def __init__(self, chat: Chat, message: Message, bot: Bot = None):
-        self.chat = chat
+    Saves message and chat and implements `do` method for your logic.
+    """
+
+    def __init__(self, message: Message, bot: Bot):
+        self.bot = bot
+        self.chat = message.chat
         self.message = message
 
-        self.replier = Replier(bot, default_chat=self.chat)
-
     @abstractmethod
-    def work(self):
+    def do(self):
         """Do some work, add replies to replier..."""
 
-    def reply(self):
-        """Reply to all generated messages."""
-        self.replier.reply()
+    def reply(self, text: str):
+        """
+        Reply to message chat.
+
+        Call it from your `do` method.
+        """
+        self.bot.send_message(
+            chat_id=self.message.chat.chat_id, text=text, parse_mode=ParseMode.HTML,
+        )
+
+    @classmethod
+    def store_message(self, update: Update) -> Message:
+        """Store incoming message and chat."""
+        chat_defaults = dict(
+            chat_type=update.effective_chat.type,
+            username=update.effective_chat.username,
+            first_name=update.effective_chat.first_name,
+            last_name=update.effective_chat.last_name,
+        )
+
+        chat = Chat.get_or_create(
+            chat_id=update.effective_chat.id, defaults=chat_defaults
+        )[0]
+
+        message = Message.create(
+            message_id=update.effective_message.message_id,
+            date=update.effective_message.date,
+            text=update.effective_message.text,
+            chat=chat,
+        )
+
+        return message
+
+    @classmethod
+    def run_as_callback(cls, update: Update, context: CallbackContext) -> "Action":
+        """Assign this class method as telegram dispatcher callback."""
+
+        message = cls.store_message(update)
+
+        action = cls(message=message, bot=context.bot)
+        action.do()
+
+        return action
