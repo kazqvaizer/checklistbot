@@ -41,6 +41,7 @@ class Action(ABC):
             username=update.effective_chat.username,
             first_name=update.effective_chat.first_name,
             last_name=update.effective_chat.last_name,
+            language_code=update.effective_user.language_code or "en",
         )
 
         chat = Chat.get_or_create(

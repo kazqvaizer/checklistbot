@@ -37,11 +37,12 @@ class BaseModel(pw.Model):
 
 
 class Chat(BaseModel):
-    chat_id = pw.IntegerField(unique=True)
+    chat_id = pw.BigIntegerField(unique=True)
     chat_type = pw.CharField(null=True)
     username = pw.CharField(null=True)
     first_name = pw.CharField(null=True)
     last_name = pw.CharField(null=True)
+    language_code = pw.CharField(default="en")
 
     @property
     def items(self) -> pw.Select:

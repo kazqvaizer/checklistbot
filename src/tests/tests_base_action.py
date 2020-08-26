@@ -55,6 +55,7 @@ def test_chat_created(execute, raw_message):
     assert chat.first_name == "John"
     assert chat.last_name == "Doe"
     assert chat.chat_type == "private"
+    assert chat.language_code == "ru"
 
 
 def test_message_added_to_new_chat(execute, raw_message):
@@ -91,6 +92,15 @@ def test_previous_chat_messages_stood_intact(chat, execute, raw_message):
     new_chat = Chat.select()[1]
     assert chat.messages.count() == 0
     assert new_chat.messages.count() == 1
+
+
+def test_default_language_code(execute, raw_message):
+    del raw_message["message"]["from"]["language_code"]
+
+    execute(raw_message)
+
+    chat = Chat.select().first()
+    assert chat.language_code == "en"
 
 
 def test_action_has_correct_message_and_bot(execute, raw_message, telegram_bot):
