@@ -8,16 +8,9 @@ from models import Chat, Message
 def save_chat_and_message(fn):
     def handle_chat(update: Update) -> Chat:
         data = update.effective_chat.to_dict()
-
         data["chat_type"] = data.pop("type", None)
 
-        chat, created = Chat.get_or_create(chat_id=data.pop("id", None), defaults=data)
-
-        if not created:
-            Chat.update(**data).where(Chat.id == chat.id).execute()
-            chat = chat.refresh()
-
-        return chat
+        return Chat.get_or_create(chat_id=data.pop("id", None), defaults=data)[0]
 
     def handle_message(update: Update, chat: Chat) -> Message:
         data = {
