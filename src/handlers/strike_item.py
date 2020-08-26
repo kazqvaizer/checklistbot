@@ -29,7 +29,6 @@ class StrikeItemHandler(EventHandler):
             TodoItem.delete().where(TodoItem.chat == self.chat).execute()
 
             self.replier.add_reply(registry["congrats"])
-            self.replier.add_reply(registry["nice_work"])
             self.replier.add_reply(registry["to_start_help"])
 
             return

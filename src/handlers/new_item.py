@@ -14,7 +14,7 @@ class NewItemHandler(EventHandler):
 
     def work(self):
         if self.chat.has_no_recent_activity():
-            self.replier.add_reply(registry["help_2"])
+            self.replier.add_reply(registry["to_check_off_help"])
 
         for text in self.cleaned_lines():
             TodoItem.create(chat=self.chat, text=text)

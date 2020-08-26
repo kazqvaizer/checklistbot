@@ -25,12 +25,4 @@ def test_replies(handler):
     handler.work()
 
     replies = handler.replier.get_replies()
-    assert len(replies) == 2
-
-
-def test_reply_content(chat, handler):
-    handler.work()
-
-    reply = handler.replier.get_replies()[0]
-    assert reply.chat == chat
-    assert "JohnyBoi" in reply.text
+    assert len(replies) == 1
