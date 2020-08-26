@@ -61,6 +61,15 @@ def test_clean_empty_lines(chat, action, message):
     assert chat.items.first().text == "Only item!"
 
 
+def test_crop_long_lines(chat, action, message):
+    message.text = f"\n {'a' * 500} \n  \n\t\n\r\n"
+    message.save()
+
+    action.do()
+
+    assert len(chat.items.first().text) == 250
+
+
 def test_escape_html(chat, action, message):
     message.text = "<s><html></asd> wow"
     message.save()

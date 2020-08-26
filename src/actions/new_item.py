@@ -10,7 +10,7 @@ from .base import Action
 class NewItemAction(Action):
     def cleaned_lines(self) -> List[str]:
         text = escape(self.message.text)
-        return [line.strip() for line in text.split("\n") if line.strip()]
+        return [line.strip()[:250] for line in text.split("\n") if line.strip()]
 
     def do(self):
         if self.chat.has_no_recent_activity:
