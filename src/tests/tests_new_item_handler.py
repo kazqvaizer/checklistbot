@@ -19,41 +19,40 @@ def message(factory, chat):
 
 
 @pytest.fixture
-def exist_item(factory, chat):
-    return factory.item(chat=chat, text="Buy 10 oranges!", is_checked=False)
-
-
-@pytest.fixture
 def handler(chat, message):
     return NewItemHandler(chat, message)
 
 
-def test_add_new_item(exist_item, chat, handler):
+def test_no_items_by_default(chat, handler):
+    assert len(chat.items) == 0
+
+
+def test_add_new_item(chat, handler):
     handler.work()
 
-    items = chat.items
-    assert len(items) == 2
+    assert len(chat.items) == 1
 
 
-def test_new_and_already_exist_items(exist_item, chat, handler):
+def test_new_item_text_from_messages(chat, handler):
     handler.work()
 
-    items = chat.items
-    assert items[0] == exist_item
-    assert items[1].text == "Eat 8.5 oranges!"  # New item
+    item = chat.items.first()
+    assert item.text == "Eat 8.5 oranges!"
 
 
-def test_escape_html(exist_item, chat, handler, message):
+def test_escape_html(chat, handler, message):
     message.text = "<s><html></asd> wow"
     message.save()
 
     handler.work()
 
-    items = chat.items
-    assert "<s><html></asd>" not in items[1].text
+    item = chat.items.first()
+    assert "<s><html></asd>" not in item.text
 
 
-def test_list_all_items_after_item_addition(exist_item, chat, handler):
+def test_list_all_items_after_item_addition(factory, chat, handler):
+    factory.item(chat=chat, text="Buy 10 oranges!")  # Exist item
+
     handler.work()
 
     reply = handler.replier.get_replies()[0]
@@ -65,5 +64,5 @@ def test_also_add_help_messages_if_no_recent_activity(chat, handler):
     handler.work()
 
     replies = handler.replier.get_replies()
-    assert "index" in replies[0].text
+    assert "index" in replies[0].text  # The help
     assert "oranges!" in replies[1].text  # The list
