@@ -40,6 +40,27 @@ def test_new_item_text_from_messages(chat, handler):
     assert item.text == "Eat 8.5 oranges!"
 
 
+def test_multiline_message_cause_multiple_items(chat, handler, message):
+    message.text = "First item!\nSecond one!"
+    message.save()
+
+    handler.work()
+
+    assert len(chat.items) == 2
+    assert chat.items[0].text == "First item!"
+    assert chat.items[1].text == "Second one!"
+
+
+def test_clean_empty_lines(chat, handler, message):
+    message.text = "\n Only item! \n  \n\t\n\r\n"
+    message.save()
+
+    handler.work()
+
+    assert len(chat.items) == 1
+    assert chat.items.first().text == "Only item!"
+
+
 def test_escape_html(chat, handler, message):
     message.text = "<s><html></asd> wow"
     message.save()
