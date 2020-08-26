@@ -30,6 +30,17 @@ def execute(telegram_update, telegram_context):
 
 
 @pytest.fixture
+def action(telegram_bot, factory, chat):
+    def _action(code: str = "en"):
+        chat.language_code = code
+        chat.save()
+
+        return TeztAction(factory.message(chat=chat), telegram_bot)
+
+    return _action
+
+
+@pytest.fixture
 def chat(factory):
     return factory.chat(chat_id=200500)
 
@@ -120,12 +131,26 @@ def test_action_do_was_called(execute, raw_message):
     assert action.dummy_field is True
 
 
-def test_reply_triggers_send_message(execute, raw_message, mock_send_message):
-    action = execute(raw_message)
-
-    action.reply("Word!")
+def test_reply_triggers_send_message(action, chat, mock_send_message):
+    action().reply("Word!")
 
     assert mock_send_message.call_count == 1
     assert mock_send_message.call_args[1]["chat_id"] == 200500
     assert mock_send_message.call_args[1]["text"] == "Word!"
     assert mock_send_message.call_args[1]["parse_mode"] == ParseMode.HTML
+
+
+@pytest.mark.parametrize(
+    "code, result",
+    (
+        ("en", "Congratulations! You have been finished you to-do list!"),
+        ("ru", "Поздравляю! Вы завершили свой список дел!"),
+        ("fr", "Congratulations! You have been finished you to-do list!"),
+    ),
+)
+def test_common_reply_works_with_languages(action, mock_send_message, code, result):
+    action = action(code)
+
+    action.common_reply("congrats")
+
+    assert mock_send_message.call_args[1]["text"] == result

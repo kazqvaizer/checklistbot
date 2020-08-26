@@ -1,4 +1,3 @@
-from messages import registry
 from models import TodoItem
 
 from .base import Action
@@ -7,14 +6,14 @@ from .base import Action
 class StrikeItemAction(Action):
     def do(self):
         if self.chat.has_no_items_at_all:
-            self.reply(registry["no_items_to_check_off"])
-            self.reply(registry["to_start_help"])
+            self.common_reply("no_items_to_check_off")
+            self.common_reply("to_start_help")
 
             return
 
         item = self.chat.get_item_by_index(int(self.message.text))
         if item is None:
-            self.reply(registry["no_index"])
+            self.common_reply("no_index")
 
             return
 
@@ -28,8 +27,8 @@ class StrikeItemAction(Action):
 
             TodoItem.delete().where(TodoItem.chat == self.chat).execute()
 
-            self.reply(registry["congrats"])
-            self.reply(registry["to_start_help"])
+            self.common_reply("congrats")
+            self.common_reply("to_start_help")
 
             return
 

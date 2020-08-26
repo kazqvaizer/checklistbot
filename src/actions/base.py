@@ -4,6 +4,7 @@ from telegram import Bot, ParseMode
 from telegram.ext.callbackcontext import CallbackContext
 from telegram.update import Update
 
+from messages import CommonMessages
 from models import Chat, Message
 
 
@@ -18,6 +19,7 @@ class Action(ABC):
         self.bot = bot
         self.chat = message.chat
         self.message = message
+        self.common_messages = CommonMessages(self.chat.language_code)
 
     @abstractmethod
     def do(self):
@@ -32,6 +34,10 @@ class Action(ABC):
         self.bot.send_message(
             chat_id=self.message.chat.chat_id, text=text, parse_mode=ParseMode.HTML,
         )
+
+    def common_reply(self, message_slug: str):
+        """Reply with common message."""
+        self.reply(self.common_messages.get_message(message_slug))
 
     @classmethod
     def store_message(self, update: Update) -> Message:
