@@ -1,5 +1,6 @@
 import logging
 
+import sentry_sdk
 from envparse import env
 from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
 
@@ -11,6 +12,8 @@ logging.basicConfig(
 
 
 env.read_envfile()
+
+sentry_sdk.init(env("SENTRY_DSN", default=None))
 
 
 updater = Updater(token=env("TELEGRAM_BOT_TOKEN"), use_context=True)
