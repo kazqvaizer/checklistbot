@@ -1,4 +1,20 @@
 _registry = {
+    "general_help": {
+        "en": (
+            "Yes, this is an another check list bot. But this one is the simplest:\n"
+            "* Add items by sending them as text messages\n"
+            "* Strike out items by sending their index\n"
+            "* If you check off all items - your list would be cleaned automatically\n"
+            "* Send /start to clean up previous list and start a new one"
+        ),
+        "ru": (
+            "Да, это очередной бот для составления списка дел. Но он очень простой:\n"
+            "* Добавляйте позиции в список просто отправляя текстовые сообщения\n"
+            "* Вычеркивайте позиции, отправляя их номер\n"
+            "* Вычеркните все позиции, чтобы закончить список и начать новый\n"
+            "* Отправьте /start чтобы стереть имеющийся список и начать его заново"
+        ),
+    },
     "to_start_help": {
         "en": "To start a new to-do list, please, send me few text lines.",
         "ru": "Чтобы начать новый список, пожалуйста, скиньте мне несколько строк.",

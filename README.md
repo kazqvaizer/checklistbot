@@ -9,4 +9,4 @@ But this one is the simplest - no complex commands are required to work with it:
 * If you check off all items - your list would be cleaned automatically.
 
  Test it by yourself here https://t.me/simple_check_list_bot
-  
+ 
