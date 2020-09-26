@@ -6,6 +6,7 @@ _registry = {
             "* Strike out items by sending their index\n"
             "* If you check off all items - your list would be cleaned automatically\n"
             "* Send /start to clean up previous list and start a new one"
+            "* Send /toggle to enable or disable bot (useful in chat groups)"
         ),
         "ru": (
             "Да, это очередной бот для составления списка дел. Но он очень простой:\n"
@@ -13,11 +14,23 @@ _registry = {
             "* Вычеркивайте позиции, отправляя их номер\n"
             "* Вычеркните все позиции, чтобы закончить список и начать новый\n"
             "* Отправьте /start чтобы стереть имеющийся список и начать его заново"
+            "* Отправьте /toggle чтобы включить или выключить бота (удобно в группах)"
         ),
     },
     "to_start_help": {
         "en": "To start a new to-do list, please, send me few text lines.",
         "ru": "Чтобы начать новый список, пожалуйста, скиньте мне несколько строк.",
+    },
+    "enabled": {
+        "en": "Enabled! Send /toggle again to disable.",
+        "ru": "Включен! Отправьте /toggle чтобы выключить.",
+    },
+    "disabled": {
+        "en": "Disabled! All messages will be ignored. Send /toggle again to enable.",
+        "ru": (
+            "Выключен! Все сообщения будут проигнорированы. "
+            "Отправьте /toggle чтобы включить."
+        ),
     },
     "to_check_off_help": {
         "en": "To check off the item simply send me its index number.",
@@ -32,7 +45,7 @@ _registry = {
         "ru": "Поздравляю! Вы завершили свой список дел!",
     },
     "no_index": {
-        "en": "Sorry I cannot find item with this index.",
+        "en": "Sorry, this index was not found.",
         "ru": "Извините, но такой индекс не найден.",
     },
     "deleted": {

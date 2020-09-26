@@ -44,6 +44,7 @@ class Chat(BaseModel):
     first_name = pw.CharField(null=True)
     last_name = pw.CharField(null=True)
     language_code = pw.CharField(default="en")
+    enabled = pw.BooleanField(default=True)
 
     @property
     def items(self) -> pw.Select:

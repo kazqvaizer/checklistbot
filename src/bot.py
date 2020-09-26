@@ -4,7 +4,13 @@ import sentry_sdk
 from envparse import env
 from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
 
-from actions import HelpAction, NewItemAction, StartAction, StrikeItemAction
+from actions import (
+    HelpAction,
+    NewItemAction,
+    StartAction,
+    StrikeItemAction,
+    ToggleAction,
+)
 
 logging.basicConfig(
     level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -14,7 +20,6 @@ logging.basicConfig(
 env.read_envfile()
 
 sentry_sdk.init(env("SENTRY_DSN", default=None))
-
 
 updater = Updater(token=env("TELEGRAM_BOT_TOKEN"), use_context=True)
 
@@ -28,6 +33,7 @@ def define_routes():
 
     add_handler(CommandHandler("start", StartAction.run_as_callback))
     add_handler(CommandHandler("help", HelpAction.run_as_callback))
+    add_handler(CommandHandler("toggle", ToggleAction.run_as_callback))
     add_handler(MessageHandler(text, NewItemAction.run_as_callback))
     add_handler(MessageHandler(numbers, StrikeItemAction.run_as_callback))
 
