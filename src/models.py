@@ -3,6 +3,7 @@ from typing import Optional
 
 import peewee as pw
 from envparse import env
+from telegram.update import Update
 
 env.read_envfile()
 
@@ -77,12 +78,33 @@ class Chat(BaseModel):
     def delete_items(self):
         TodoItem.delete().where(TodoItem.chat == self).execute()
 
+    @classmethod
+    def get_or_create_from_update(cls, update: Update) -> "Chat":
+        chat_id = update.effective_chat.id
+        defaults = dict(
+            chat_type=update.effective_chat.type,
+            username=update.effective_chat.username,
+            first_name=update.effective_chat.first_name,
+            last_name=update.effective_chat.last_name,
+            language_code=update.effective_user.language_code or "en",
+        )
+        return cls.get_or_create(chat_id=chat_id, defaults=defaults)[0]
+
 
 class Message(BaseModel):
     message_id = pw.IntegerField(null=True)
     chat = pw.ForeignKeyField(Chat, backref="messages")
     date = pw.DateTimeField(null=True)
     text = pw.CharField(null=True)
+
+    @classmethod
+    def create_from_update(cls, update: Update) -> "Message":
+        return cls.create(
+            chat=Chat.get_or_create_from_update(update),
+            message_id=update.effective_message.message_id,
+            date=update.effective_message.date,
+            text=update.effective_message.text,
+        )
 
 
 class TodoItem(BaseModel):

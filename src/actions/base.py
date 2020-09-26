@@ -5,7 +5,7 @@ from telegram.ext.callbackcontext import CallbackContext
 from telegram.update import Update
 
 from messages import CommonMessages
-from models import Chat, Message
+from models import Message
 
 
 class Action(ABC):
@@ -40,34 +40,9 @@ class Action(ABC):
         self.reply(self.common_messages.get_message(message_slug))
 
     @classmethod
-    def store_message(self, update: Update) -> Message:
-        """Store incoming message and chat."""
-        chat_defaults = dict(
-            chat_type=update.effective_chat.type,
-            username=update.effective_chat.username,
-            first_name=update.effective_chat.first_name,
-            last_name=update.effective_chat.last_name,
-            language_code=update.effective_user.language_code or "en",
-        )
-
-        chat = Chat.get_or_create(
-            chat_id=update.effective_chat.id, defaults=chat_defaults
-        )[0]
-
-        message = Message.create(
-            message_id=update.effective_message.message_id,
-            date=update.effective_message.date,
-            text=update.effective_message.text,
-            chat=chat,
-        )
-
-        return message
-
-    @classmethod
     def run_as_callback(cls, update: Update, context: CallbackContext) -> "Action":
         """Assign this class method as telegram dispatcher callback."""
-
-        message = cls.store_message(update)
+        message = Message.create_from_update(update)
 
         action = cls(message=message, bot=context.bot)
         action.do()
