@@ -19,8 +19,9 @@ sentry_sdk.init(env("SENTRY_DSN", default=None))
 updater = Updater(token=env("TELEGRAM_BOT_TOKEN"), use_context=True)
 dispatcher = updater.dispatcher
 
-text = Filters.text and ~Filters.regex("^[0-9]+$")
-numbers = Filters.text and Filters.regex("^[0-9]+$")
+base_filter = Filters.text & (~Filters.command) & (~Filters.status_update)
+text = base_filter & (~Filters.regex("^[0-9]+$"))
+numbers = base_filter & Filters.regex("^[0-9]+$")
 
 
 def define_routes():
