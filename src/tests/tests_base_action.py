@@ -10,10 +10,13 @@ pytestmark = [
 
 
 class TeztAction(Action):
-    dummy_field = False
-
     def do(self):
-        self.dummy_field = True
+        super().do()  # This one is mocked
+
+
+@pytest.fixture(autouse=True)
+def mock_do(mocker):
+    return mocker.patch("actions.base.Action.do")
 
 
 @pytest.fixture
@@ -114,21 +117,20 @@ def test_default_language_code(execute, raw_message):
     assert chat.language_code == "en"
 
 
-def test_action_has_correct_message_and_bot(execute, raw_message, telegram_bot):
-    action = execute(raw_message)
-
-    message = Message.select().first()
-    assert action.message == message
-    assert action.chat == message.chat
-    assert action.bot == telegram_bot
-
-
-def test_action_do_was_called(execute, raw_message):
-    action = execute(raw_message)
+def test_action_has_correct_message_and_bot(execute, raw_message, telegram_bot, mocker):
+    mock = mocker.patch("actions.base.Action.__init__", return_value=None)
 
     execute(raw_message)
 
-    assert action.dummy_field is True
+    message = Message.select().first()
+    assert mock.call_args[1]["message"] == message
+    assert mock.call_args[1]["bot"] == telegram_bot
+
+
+def test_action_do_was_called(mock_do, execute, raw_message):
+    execute(raw_message)
+
+    assert mock_do.called
 
 
 def test_reply_triggers_send_message(action, chat, mock_send_message):

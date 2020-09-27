@@ -40,11 +40,8 @@ class Action(ABC):
         self.reply(self.common_messages.get_message(message_slug))
 
     @classmethod
-    def run_as_callback(cls, update: Update, context: CallbackContext) -> "Action":
+    def run_as_callback(action_cls, update: Update, context: CallbackContext):
         """Assign this class method as telegram dispatcher callback."""
         message = Message.create_from_update(update)
 
-        action = cls(message=message, bot=context.bot)
-        action.do()
-
-        return action
+        action_cls(message=message, bot=context.bot).do()
