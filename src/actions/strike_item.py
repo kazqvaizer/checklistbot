@@ -3,6 +3,9 @@ from .base import Action
 
 class StrikeItemAction(Action):
     def do(self):
+        if not self.chat.enabled:
+            return
+
         if self.chat.has_no_items_at_all:
             self.common_reply("no_items_to_check_off")
             self.common_reply("to_start_help")

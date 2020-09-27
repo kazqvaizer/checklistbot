@@ -12,6 +12,9 @@ class NewItemAction(Action):
         return [line.strip()[:250] for line in text.split("\n") if line.strip()]
 
     def do(self):
+        if not self.chat.enabled:
+            return
+
         if self.chat.has_no_recent_activity:
             self.common_reply("to_check_off_help")
 

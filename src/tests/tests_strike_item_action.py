@@ -10,7 +10,7 @@ pytestmark = [
 
 @pytest.fixture
 def chat(factory):
-    return factory.chat()
+    return factory.chat(enabled=True)
 
 
 @pytest.fixture
@@ -92,3 +92,12 @@ def test_struck_back(exist_items, chat, action, mock_reply):
     assert "1. Buy 10 oranges!" in reply
     assert "2. Buy 10 apples!" in reply
     assert "3. Buy 10 fucwits!" in reply
+
+
+def test_ignore_action_if_chat_is_disabled(exist_items, chat, action, mock_reply):
+    chat.enabled = False
+    chat.save()
+
+    action(index="2").do()
+
+    assert mock_reply.called is False

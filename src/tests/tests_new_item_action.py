@@ -96,3 +96,12 @@ def test_also_add_help_messages_if_no_recent_activity(chat, action, mock_reply):
     replies = mock_reply.call_args_list
     assert "index" in replies[0][0][0]  # The help
     assert "oranges!" in replies[1][0][0]  # The list
+
+
+def test_ignore_action_if_chat_is_disabled(chat, action, mock_reply):
+    chat.enabled = False
+    chat.save()
+
+    action.do()
+
+    assert mock_reply.called is False

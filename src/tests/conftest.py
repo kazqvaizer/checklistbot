@@ -78,6 +78,11 @@ def read_fixture():
 
 
 @pytest.fixture
+def raw_message(read_fixture):
+    return read_fixture("message")
+
+
+@pytest.fixture
 def telegram_update():
     return lambda data: Update.de_json(data, None)
 
