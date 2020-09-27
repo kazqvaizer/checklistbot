@@ -2,10 +2,10 @@ _registry = {
     "general_help": {
         "en": (
             "Yes, this is an another check list bot. But this one is the simplest:\n"
-            "* Add items by sending them as text messages\n"
+            "* Add items by sending text messages\n"
             "* Strike out items by sending their index\n"
             "* If you check off all items - your list would be cleaned automatically\n"
-            "* Send /start to clean up previous list and start a new one"
+            "* Send /start to clean up previous list and start a new one\n"
             "* Send /toggle to enable or disable bot (useful in chat groups)"
         ),
         "ru": (
@@ -13,7 +13,7 @@ _registry = {
             "* Добавляйте позиции в список просто отправляя текстовые сообщения\n"
             "* Вычеркивайте позиции, отправляя их номер\n"
             "* Вычеркните все позиции, чтобы закончить список и начать новый\n"
-            "* Отправьте /start чтобы стереть имеющийся список и начать его заново"
+            "* Отправьте /start чтобы стереть имеющийся список и начать его заново\n"
             "* Отправьте /toggle чтобы включить или выключить бота (удобно в группах)"
         ),
     },
