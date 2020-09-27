@@ -6,6 +6,7 @@ import pytest
 from telegram.bot import Bot
 from telegram.update import Update
 
+from actions.base import Action
 from models import Chat, Message, TodoItem, app_models, db
 
 
@@ -30,6 +31,20 @@ def mock_send_message(mocker):
 @pytest.fixture
 def mock_reply(mocker):
     return mocker.patch("actions.base.Action.reply")
+
+
+@pytest.fixture
+def mock_do(mocker):
+    return mocker.patch("actions.base.Action.do")
+
+
+@pytest.fixture
+def tezt_action():
+    class TeztAction(Action):
+        def do(self):
+            super().do()  # You should mock it with `mock_do` fixture
+
+    return TeztAction
 
 
 @pytest.fixture
