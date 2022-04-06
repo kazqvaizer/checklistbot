@@ -34,7 +34,7 @@ jobs:
             - "venv"
 
       - run:
-          name: Create empty dot env file
+          name: Create empty dot env file!
           command: touch src/.env
 
       - run:
