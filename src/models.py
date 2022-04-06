@@ -48,6 +48,7 @@ class Chat(BaseModel):
     last_name = pw.CharField(null=True)
     language_code = pw.CharField(default="en")
     enabled = pw.BooleanField(default=True)
+    todo_message_id = pw.BigIntegerField(null=True)
 
     @property
     def items(self) -> pw.Select:
