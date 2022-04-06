@@ -18,7 +18,10 @@ def _get_recent_threshold():
     return _utcnow() - timedelta(hours=2)
 
 
-def _format_item(index: int, item: "TodoItem",) -> str:
+def _format_item(
+    index: int,
+    item: "TodoItem",
+) -> str:
     line = f"{index}. {item.text}"
     return f"<s>{line}</s>" if item.is_checked else line
 

@@ -32,7 +32,9 @@ class Action(ABC):
         Call it from your `do` method.
         """
         self.bot.send_message(
-            chat_id=self.message.chat.chat_id, text=text, parse_mode=ParseMode.HTML,
+            chat_id=self.message.chat.chat_id,
+            text=text,
+            parse_mode=ParseMode.HTML,
         )
 
     def common_reply(self, message_slug: str):

@@ -101,7 +101,7 @@ def test_action_has_correct_message_and_bot(execute, raw_message, telegram_bot, 
 
     message = Message.select().first()
     assert mock.call_args[1]["message"] == message
-    assert mock.call_args[1]["bot"] == telegram_bot
+    assert mock.call_args[1]["bot"].token == telegram_bot.token
 
 
 def test_action_do_was_called(mock_do, execute, raw_message):
