@@ -25,10 +25,10 @@ class NewItemAction(Action):
         for text in self.cleaned_lines():
             TodoItem.create(chat=self.chat, text=text)
 
+        new_todo_message = self.reply(self.chat.get_formatted_items())
+
         self.delete(self.message.message_id)
         self.delete(self.chat.todo_message_id)
-
-        new_todo_message = self.reply(self.chat.get_formatted_items())
 
         self.chat.todo_message_id = new_todo_message.message_id
         self.chat.save()

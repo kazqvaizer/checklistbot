@@ -21,10 +21,11 @@ class StrikeItemAction(Action):
         item.is_checked = not item.is_checked  # Toggle
         item.save()
 
+        new_todo_message = self.reply(self.chat.get_formatted_items())
+
         self.delete(self.message.message_id)  # Drop message with index
         self.delete(self.chat.todo_message_id)  # Drop previous todo list
 
-        new_todo_message = self.reply(self.chat.get_formatted_items())
         self.chat.todo_message_id = new_todo_message.message_id
         self.chat.save()
 
