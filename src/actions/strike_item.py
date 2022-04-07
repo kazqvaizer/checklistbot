@@ -21,7 +21,12 @@ class StrikeItemAction(Action):
         item.is_checked = not item.is_checked  # Toggle
         item.save()
 
-        self.reply(self.chat.get_formatted_items())
+        self.delete(self.message.message_id)  # Drop message with index
+        self.delete(self.chat.todo_message_id)  # Drop previous todo list
+
+        new_todo_message = self.reply(self.chat.get_formatted_items())
+        self.chat.todo_message_id = new_todo_message.message_id
+        self.chat.save()
 
         if not self.chat.has_not_checked_items:
 
@@ -29,5 +34,3 @@ class StrikeItemAction(Action):
             self.common_reply("to_start_help")
 
             self.chat.delete_items()
-
-        self.delete(self.message.message_id)

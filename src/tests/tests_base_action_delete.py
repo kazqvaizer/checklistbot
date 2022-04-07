@@ -21,3 +21,9 @@ def test_delete(action, mock_delete_message):
     assert mock_delete_message.call_count == 1
     assert mock_delete_message.call_args[1]["chat_id"] == 200500
     assert mock_delete_message.call_args[1]["message_id"] == 100500
+
+
+def test_do_nothing_if_nothing_to_delete(action, mock_delete_message):
+    action().delete(None)
+
+    assert mock_delete_message.call_count == 0

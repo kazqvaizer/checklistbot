@@ -103,7 +103,29 @@ def test_ignore_action_if_chat_is_disabled(exist_items, chat, action, mock_reply
     assert mock_reply.called is False
 
 
-def test_delete_incoming_message_with_index(exist_items, action, mock_delete):
+def test_delete_incoming_message_with_index(exist_items, action, mock_delete, chat):
     action(message_id=10300500).do()
 
-    mock_delete.assert_called_once_with(10300500)
+    assert mock_delete.call_count == 2
+    assert mock_delete.call_args_list[0].args == (10300500,)
+
+
+def test_delete_message_with_previous_todo_list(exist_items, action, mock_delete, chat):
+    chat.todo_message_id = 1003077
+    chat.save()
+
+    action().do()
+
+    assert mock_delete.call_count == 2
+    assert mock_delete.call_args_list[1].args == (1003077,)
+
+
+def test_save_new_todo_message_from_response(
+    exist_items, action, mock_delete, chat, mock_reply, mocker
+):
+    mock_reply.return_value = mocker.MagicMock(message_id=666777888)
+
+    action().do()
+
+    chat = chat.get(id=chat.id)
+    assert chat.todo_message_id == 666777888

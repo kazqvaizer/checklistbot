@@ -110,4 +110,36 @@ def test_ignore_action_if_chat_is_disabled(chat, action, mock_reply):
 def test_delete_incoming_message_with_text(action, mock_delete):
     action.do()
 
-    mock_delete.assert_called_once_with(100300400)
+    assert mock_delete.call_count == 2
+    assert mock_delete.call_args_list[0].args == (100300400,)
+
+
+def test_delete_message_with_previous_todo_list(factory, action, mock_delete, chat):
+    factory.item(chat=chat, text="Buy 10 oranges!")  # Exist item
+
+    chat.todo_message_id = 1003077
+    chat.save()
+
+    action.do()
+
+    assert mock_delete.call_count == 2
+    assert mock_delete.call_args_list[1].args == (1003077,)
+
+
+def test_cleanup_todo_message_id_if_no_other_messages(action, mock_delete, chat):
+    chat.todo_message_id = 1003077
+    chat.save()
+
+    action.do()
+
+    assert mock_delete.call_count == 2
+    assert mock_delete.call_args_list[1].args == (None,)
+
+
+def test_save_new_todo_message_from_response(action, chat, mock_reply, mocker):
+    mock_reply.return_value = mocker.MagicMock(message_id=666777888)
+
+    action.do()
+
+    chat = chat.get(id=chat.id)
+    assert chat.todo_message_id == 666777888

@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 
-from telegram import Bot, ParseMode
+from telegram import Bot
+from telegram import Message as TelegramMessage
+from telegram import ParseMode
 from telegram.ext.callbackcontext import CallbackContext
 from telegram.update import Update
 
@@ -25,24 +28,27 @@ class Action(ABC):
     def do(self):
         """Do some work, add replies to replier..."""
 
-    def reply(self, text: str):
+    def reply(self, text: str) -> TelegramMessage:
         """
         Reply to message chat.
 
         Call it from your `do` method.
         """
-        self.bot.send_message(
+        return self.bot.send_message(
             chat_id=self.message.chat.chat_id,
             text=text,
             parse_mode=ParseMode.HTML,
         )
 
-    def delete(self, message_id: int):
+    def delete(self, message_id: Optional[int]):
         """
         Delete chat message.
 
         Call it from your `do` method.
         """
+        if not message_id:
+            return
+
         self.bot.delete_message(
             chat_id=self.message.chat.chat_id,
             message_id=message_id,
