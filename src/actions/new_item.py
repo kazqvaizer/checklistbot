@@ -22,3 +22,4 @@ class NewItemAction(Action):
             TodoItem.create(chat=self.chat, text=text)
 
         self.reply(self.chat.get_formatted_items())
+        self.delete(self.message.message_id)

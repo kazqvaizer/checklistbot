@@ -28,9 +28,19 @@ def mock_send_message(mocker):
     return mocker.patch("telegram.bot.Bot.send_message")
 
 
+@pytest.fixture(autouse=True)
+def mock_delete_message(mocker):
+    return mocker.patch("telegram.bot.Bot.delete_message")
+
+
 @pytest.fixture
 def mock_reply(mocker):
     return mocker.patch("actions.base.Action.reply")
+
+
+@pytest.fixture
+def mock_delete(mocker):
+    return mocker.patch("actions.base.Action.delete")
 
 
 @pytest.fixture

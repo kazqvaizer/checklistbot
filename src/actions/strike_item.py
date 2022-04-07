@@ -21,16 +21,13 @@ class StrikeItemAction(Action):
         item.is_checked = not item.is_checked  # Toggle
         item.save()
 
-        if not self.chat.has_not_checked_items:
+        self.reply(self.chat.get_formatted_items())
 
-            # Show all struck items to get more dopamine
-            self.reply(self.chat.get_formatted_items())
+        if not self.chat.has_not_checked_items:
 
             self.common_reply("congrats")
             self.common_reply("to_start_help")
 
             self.chat.delete_items()
 
-            return
-
-        self.reply(self.chat.get_formatted_items())
+        self.delete(self.message.message_id)

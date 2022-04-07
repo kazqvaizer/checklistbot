@@ -37,6 +37,17 @@ class Action(ABC):
             parse_mode=ParseMode.HTML,
         )
 
+    def delete(self, message_id: int):
+        """
+        Delete chat message.
+
+        Call it from your `do` method.
+        """
+        self.bot.delete_message(
+            chat_id=self.message.chat.chat_id,
+            message_id=message_id,
+        )
+
     def common_reply(self, message_slug: str):
         """Reply with common message."""
         self.reply(self.common_messages.get_message(message_slug))

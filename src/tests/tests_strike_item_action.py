@@ -24,8 +24,8 @@ def exist_items(factory, chat):
 
 @pytest.fixture
 def action(chat, factory, telegram_bot):
-    return lambda index: StrikeItemAction(
-        factory.message(chat=chat, text=index), telegram_bot
+    return lambda index="2", message_id=None: StrikeItemAction(
+        factory.message(chat=chat, text=index, message_id=message_id), telegram_bot
     )
 
 
@@ -101,3 +101,9 @@ def test_ignore_action_if_chat_is_disabled(exist_items, chat, action, mock_reply
     action(index="2").do()
 
     assert mock_reply.called is False
+
+
+def test_delete_incoming_message_with_index(exist_items, action, mock_delete):
+    action(message_id=10300500).do()
+
+    mock_delete.assert_called_once_with(10300500)

@@ -15,7 +15,7 @@ def chat(factory):
 
 @pytest.fixture
 def message(factory, chat):
-    return factory.chat(chat=chat, text="Eat 8.5 oranges!")
+    return factory.chat(chat=chat, text="Eat 8.5 oranges!", message_id=100300400)
 
 
 @pytest.fixture
@@ -105,3 +105,9 @@ def test_ignore_action_if_chat_is_disabled(chat, action, mock_reply):
     action.do()
 
     assert mock_reply.called is False
+
+
+def test_delete_incoming_message_with_text(action, mock_delete):
+    action.do()
+
+    mock_delete.assert_called_once_with(100300400)
