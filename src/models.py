@@ -86,12 +86,17 @@ class Chat(BaseModel):
     @classmethod
     def get_or_create_from_update(cls, update: Update) -> "Chat":
         chat_id = update.effective_chat.id
+
+        language_code = "en"
+        if update.effective_user and update.effective_user.language_code:
+            language_code = update.effective_user.language_code
+
         defaults = dict(
             chat_type=update.effective_chat.type,
             username=update.effective_chat.username,
             first_name=update.effective_chat.first_name,
             last_name=update.effective_chat.last_name,
-            language_code=update.effective_user.language_code or "en",
+            language_code=language_code,
         )
         return cls.get_or_create(chat_id=chat_id, defaults=defaults)[0]
 

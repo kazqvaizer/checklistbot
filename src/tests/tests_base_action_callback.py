@@ -94,6 +94,15 @@ def test_default_language_code(execute, raw_message):
     assert chat.language_code == "en"
 
 
+def test_default_language_code_if_no_user(execute, raw_message):
+    del raw_message["message"]["from"]
+
+    execute(raw_message)
+
+    chat = Chat.select().first()
+    assert chat.language_code == "en"
+
+
 def test_action_has_correct_message_and_bot(execute, raw_message, telegram_bot, mocker):
     mock = mocker.patch("actions.base.Action.__init__", return_value=None)
 
