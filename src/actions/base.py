@@ -4,6 +4,7 @@ from typing import Optional
 from telegram import Bot
 from telegram import Message as TelegramMessage
 from telegram import ParseMode
+from telegram.error import NetworkError
 from telegram.ext.callbackcontext import CallbackContext
 from telegram.update import Update
 
@@ -49,10 +50,13 @@ class Action(ABC):
         if not message_id:
             return
 
-        self.bot.delete_message(
-            chat_id=self.message.chat.chat_id,
-            message_id=message_id,
-        )
+        try:
+            self.bot.delete_message(
+                chat_id=self.message.chat.chat_id,
+                message_id=message_id,
+            )
+        except NetworkError:
+            pass
 
     def common_reply(self, message_slug: str):
         """Reply with common message."""
